@@ -216,7 +216,8 @@ def _download(client, message):
         dl_path = DOWNLOAD_DIRECTORY
         LOGGER.info(f'Download:{user_id}: {link}')
         sent_message.edit(Messages.DOWNLOADING.format(link))
-        result, file_path = download_file(link, dl_path)
+        result, tfile_path = download_file(link, dl_path)
+        file_path = tfile_path[:-4]
         if os.path.exists(file_path):
           sent_message.edit(Messages.DOWNLOADED_SUCCESSFULLY.format(os.path.basename(file_path), humanbytes(os.path.getsize(file_path))))
           msg = GoogleDrive(user_id).upload_file(file_path)
