@@ -210,9 +210,23 @@ def _download(client, message):
         os.remove(file_path)
       else:
         sent_message = message.reply_text('🕵️**PornHub Error**', quote=True)
+     
+    else:
+      try:
+        dl_path = DOWNLOAD_DIRECTORY
+        LOGGER.info(f'Download:{user_id}: {link}')
+        sent_message.edit(Messages.DOWNLOADING.format(link))
+        result, file_path = download_file(link, dl_path)
+        if os.path.exists(file_path):
+          sent_message.edit(Messages.DOWNLOADED_SUCCESSFULLY.format(os.path.basename(file_path), humanbytes(os.path.getsize(file_path))))
+          msg = GoogleDrive(user_id).upload_file(file_path)
+          sent_message.edit(msg)
+          LOGGER.info(f'Deleteing: {file_path}')
+          os.remove(file_path)
+      except:
+        sent_message = message.reply_text('🕵️**Invalid link Provided...**', quote=True)
+      
     
-    
-   
 
 @Client.on_message(filters.private & filters.incoming & (filters.document | filters.audio | filters.video | filters.photo) & CustomFilters.auth_users)
 def _telegram_file(client, message):
